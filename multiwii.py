@@ -1,4 +1,5 @@
 from pymultiwii import MultiWii
+from sys import stdout
 
 def runAttitude():
     board = MultiWii("/dev/tty.SLAB_USBtoUART")

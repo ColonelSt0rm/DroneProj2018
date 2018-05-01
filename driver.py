@@ -1,4 +1,3 @@
-from pymultiwii import MultiWii
 import ESC
 import multiwii
 
