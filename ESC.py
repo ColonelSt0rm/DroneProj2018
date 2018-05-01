@@ -3,19 +3,29 @@
 
 import os
 import time
-os.system ("sudo pigpiod")
+os.system ("sudo pigpiod") #initialize PiGPIO library if it isn't already
 time.sleep(1)
 import pigpio
 
-ESC1=4  #Connect the ESC signal cable in the corresponding GPIO pin
+#ESC connections are as follows (NAME :: Real Pin # :: GPIO Pin #)
+#ESC1 :: 7 :: GPIO 4
+#ESC2 :: 11 :: GPIO 17
+#ESC3 :: 12 :: GPIO 18
+#ESC4 :: 13 :: GPIO 27
+
+ESC1=4
 ESC2=17
 ESC3=18
 ESC4=27
 
+# This list is used to apply changes to all four controllers quickly
 ESCS = [ESC1, ESC2, ESC3, ESC4]
 
 pi = pigpio.pi();
-pi.set_servo_pulsewidth(ESC, 0)
+
+#Make sure motors are completely still at initialization
+for ESC in ESCS:
+    pi.set_servo_pulsewidth(ESC, 0)
 
 max_value = 2000
 min_value = 700
