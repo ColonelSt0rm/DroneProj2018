@@ -3,6 +3,7 @@ from sys import stdout
 
 def runAttitude():
     board = MultiWii("/dev/tty.SLAB_USBtoUART")
+    print "MARK2"
     try:
         while True:
             board.getData(MultiWii.ATTITUDE)

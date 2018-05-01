@@ -22,36 +22,43 @@ ESC4=27
 ESCS = [ESC1, ESC2, ESC3, ESC4]
 
 pi = pigpio.pi();
+print pi.connected
 
 #Make sure motors are completely still at initialization
 for ESC in ESCS:
     pi.set_servo_pulsewidth(ESC, 0)
+    print "set ESC at %d" % ESC
 
 max_value = 2000
 min_value = 700
-print "For first time launch, select calibrate"
+"""print "For first time launch, select calibrate"
 print "Type the exact word for the function you want"
-print "calibrate OR manual OR control OR arm OR stop"
+print "calibrate OR manual OR control OR arm OR stop" """
 
 def manual_drive(): #You will use this function to program your ESC if required
-    print "Enter a value between 0 and %d" % max_value
+    global ESCS
+    print "Enter a value between 500 and %d" % max_value
     while True:
         inp = raw_input()
         if inp == "stop":
             stop()
             break
-		elif inp == "control":
+	elif inp == "control":
 			control()
 			break
-		elif inp == "arm":
+	elif inp == "arm":
 			arm()
 			break
         else:
-            pi.set_servo_pulsewidth(ESC,inp)
+            if int(inp) < 500: 
+               break
+            for ESC in ESCS:
+                pi.set_servo_pulsewidth(ESC,inp)
 
 def calibrate():   #Calibrate the ESC normally
+    global ESCS
     for ESC in ESCS:
-    pi.set_servo_pulsewidth(ESC, 0)
+        pi.set_servo_pulsewidth(ESC, 0)
     print("Disconnect the battery and press Enter")
     inp = raw_input()
     if inp == '':
@@ -78,6 +85,7 @@ def calibrate():   #Calibrate the ESC normally
             control()
 
 def control():
+    global ESCS
     print "Starting the motor. Make sure it is calibrated and armed."
     time.sleep(1)
     speed = 1500    #should be between 700 - 2000. 1500 is standard 'stopped' speed
@@ -105,13 +113,14 @@ def control():
         elif inp == "manual":
             manual_drive()
             break
-		elif inp == "arm":
-			arm()
-			break
+	elif inp == "arm":
+	    arm()
+	    break
         else:
             print "Unrecognized input. Valid inputs are a,q,d or e"
 
 def arm(): #This is the arming procedure of an ESC
+    global ESCS
     print "Connect the battery and press Enter"
     inp = raw_input()
     if inp == '':
@@ -125,10 +134,12 @@ def arm(): #This is the arming procedure of an ESC
         control()
 
 def stop(): #This will stop every action your Pi is performing, but will not disable PiGPIO library
-    for ESC in ESCS:
-        pi.set_servo_pulsewidth(ESC, 0)
-    pi.stop()
-
+    global ESCS
+    for esc in ESCS:
+        print "MARK"
+        pi.set_servo_pulsewidth(esc, 0)
+    #pi.stop()
+"""
 running = True
 while(running):
     inp = raw_input()
@@ -146,3 +157,4 @@ while(running):
         stop()
     else :
         print "Unrecognized input, try again."
+"""
