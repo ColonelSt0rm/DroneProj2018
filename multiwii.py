@@ -2,7 +2,7 @@ from pymultiwii import MultiWii
 from sys import stdout
 
 def runAttitude():
-    board = MultiWii("/dev/tty.SLAB_USBtoUART")
+    board = MultiWii("/dev/bus/usb/001/002")
     print "MARK2"
     try:
         while True:

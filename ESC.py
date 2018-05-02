@@ -27,7 +27,8 @@ print pi.connected
 #Make sure motors are completely still at initialization
 for ESC in ESCS:
     pi.set_servo_pulsewidth(ESC, 0)
-    print "set ESC at %d" % ESC
+    print "set ESC at %d to" % ESC
+    print pi.get_servo_pulsewidth(ESC)
 
 max_value = 2000
 min_value = 700
@@ -35,7 +36,7 @@ min_value = 700
 print "Type the exact word for the function you want"
 print "calibrate OR manual OR control OR arm OR stop" """
 
-def manual_drive(): #You will use this function to program your ESC if required
+def manual_drive(): #Use this function to program the ESC if required
     global ESCS
     print "Enter a value between 500 and %d" % max_value
     while True:
@@ -54,6 +55,7 @@ def manual_drive(): #You will use this function to program your ESC if required
                break
             for ESC in ESCS:
                 pi.set_servo_pulsewidth(ESC,inp)
+                print pi.get_servo_pulsewidth(ESC)
 
 def calibrate():   #Calibrate the ESC normally
     global ESCS
@@ -81,8 +83,6 @@ def calibrate():   #Calibrate the ESC normally
                 time.sleep(1)
                 print "ESC on GPIO pin %d has been calibrated" % ESC
 
-            print "Initializing control subsystem..."
-            control()
 
 def control():
     global ESCS
@@ -92,7 +92,9 @@ def control():
     print "Controls - a to decrease speed & d to increase speed OR q to decrease a lot of speed & e to increase a lot of speed"
     while True:
         for ESC in ESCS:
+            print "Setting pin %d to pulsewidth %d" % (ESC, speed)
             pi.set_servo_pulsewidth(ESC, speed)
+            print pi.get_servo_pulsewidth(ESC)
         inp = raw_input()
 
         if inp == "q":
@@ -117,7 +119,7 @@ def control():
 	    arm()
 	    break
         else:
-            print "Unrecognized input. Valid inputs are a,q,d or e"
+            print "Unrecognized input. Valid inputs are a,q,d,e, stop, manual, and arm"
 
 def arm(): #This is the arming procedure of an ESC
     global ESCS
@@ -126,19 +128,25 @@ def arm(): #This is the arming procedure of an ESC
     if inp == '':
         for ESC in ESCS:
             pi.set_servo_pulsewidth(ESC, 0)
-            time.sleep(1)
+            print "Pin at %d set to %d" % (ESC, pi.get_servo_pulsewidth(ESC))
+            time.sleep(1) 
             pi.set_servo_pulsewidth(ESC, max_value)
+            print "Pin at %d set to %d" % (ESC, pi.get_servo_pulsewidth(ESC))
             time.sleep(1)
             pi.set_servo_pulsewidth(ESC, min_value)
+            print "Pin at %d set to %d" % (ESC, pi.get_servo_pulsewidth(ESC))
             time.sleep(1)
-        control()
+            print "Armed ESC at pin %d" % ESC
+            time.sleep(10)
+        manual_drive()
 
-def stop(): #This will stop every action your Pi is performing, but will not disable PiGPIO library
+
+def stop(): #This will stop every action the Pi is performing, but will not disable PiGPIO library
     global ESCS
     for esc in ESCS:
         print "MARK"
         pi.set_servo_pulsewidth(esc, 0)
-    #pi.stop()
+    pi.stop()
 """
 running = True
 while(running):
